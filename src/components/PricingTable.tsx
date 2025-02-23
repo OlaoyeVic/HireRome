@@ -110,17 +110,17 @@ const PricingTable = () => {
           <tr className='last-row'>
             <td className="px-4 py-2"></td>
               <td className="border px-4 py-2 text-center">
-                <button className="bg-[#0A5594] hover:bg-green-700 text-white font-bold py-2 px-4 rounded-[32px]">
+                <button className="bg-[#0A5594] hover:bg-green-700 text-white font-normal text-xs md:text-base whitespace-nowrap md:font-bold py-2 px-4 rounded-[32px]">
                   Choose Your Plan
                 </button>
               </td>
               <td className="border px-4 py-2 text-center">
-                <button className="bg-[#37B34A] hover:bg-green-700 text-white font-bold py-2 px-4 rounded-[32px]">
+                <button className="bg-[#37B34A] hover:bg-green-700 text-white font-normal text-xs md:text-base whitespace-nowrap md:font-bold py-2 px-4 rounded-[32px]">
                   Choose Your Plan
                 </button>
               </td>
               <td className="border px-4 py-2 text-center">
-                <button className="bg-[#258DCD] hover:bg-green-700 text-white font-bold py-2 px-4 rounded-[32px]">
+                <button className="bg-[#258DCD] hover:bg-green-700 text-white font-normal text-xs md:text-base whitespace-nowrap md:font-bold py-2 px-4 rounded-[32px]">
                   Choose Your Plan
                 </button>
               </td>

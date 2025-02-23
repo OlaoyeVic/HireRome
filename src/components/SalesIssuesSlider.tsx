@@ -57,7 +57,7 @@ const SalesIssuesSection = () => {
         </p>
         <div className="mt-6 space-y-4">
         {issues.map((issue, index) => (
-          <div key={index} className="relative overflow-hidden">
+          <div key={index} className="relative overflow-hidden p-6 rounded-md">
             {currentIndex === index && (
               <motion.div
                 className="absolute inset-0 bg-blue-600 h-full w-full"
