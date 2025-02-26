@@ -1,6 +1,22 @@
 import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { IoIosArrowForward } from 'react-icons/io';
+
+interface Plan {
+  name: string;
+  price: string;
+  description: string;
+  features: string[];
+  color: string;
+  bgColor: string;
+  popularity?: string;
+};
 
 const PricingPlans = () => {
+  const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
   const plans = [
     {
       name: 'Start Up',
@@ -60,6 +76,20 @@ const PricingPlans = () => {
       bgColor: '#FFFFFF',
     },
   ];
+
+  const handleSelectPlan = (plan: Plan) => {
+    setSelectedPlan(plan);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    alert("Form submitted");
+  };
 
   const CheckIcon = ({ className }: { className?: string }) => (
     <svg
@@ -136,12 +166,143 @@ const PricingPlans = () => {
                 </li>
               ))}
             </ul>
-            <button className="mt-6 w-full py-2 bg-[#0A5594] text-white rounded-md transition-all hover:bg-[#F68923] hover:text-white border border-blue-600">
+            <button 
+              className="mt-6 w-full py-2 bg-[#0A5594] text-white rounded-md transition-all hover:bg-[#F68923] hover:text-white border border-blue-600"
+              onClick={() => handleSelectPlan(plan)}
+            >
               Choose Plan
             </button>
           </motion.div>
         ))}
       </div>
+      {isModalOpen && selectedPlan && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
+          <div className="bg-white rounded-lg p-8 w-full lg:w-[70%] max-h-[100vh] relative overflow-hidden flex flex-col">
+            <button
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+              onClick={closeModal}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+            <h2 className="text-left text-2xl font-semibold mb-4">
+              {selectedPlan.name}
+            </h2>
+            <p className="text-left text-gray-600 mb-6">Price: {selectedPlan.price}</p>
+            <div className=" overflow-y-auto flex-1 mt-4">
+              <form onSubmit={handleSubmit}>
+                <div className="grid grid-col-1 lg:grid-cols-2 gap-8 mb-8">
+                  {" "}
+                  {/* Two-column grid */}
+                  <div>
+                    <label
+                      htmlFor="firstName"
+                      className="block text-left text-gray-700 font-medium mb-2"
+                    >
+                      Fullname
+                    </label>
+                    <input
+                      type="text"
+                      id="name"
+                      name="name"
+                      className="border border-gray-300 rounded-md px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="phonenumber"
+                      className="block text-left text-gray-700 font-medium mb-2"
+                    >
+                      Phone Number
+                    </label>
+                    <input
+                      type="text"
+                      id="phonenumber"
+                      name="phonenumber"
+                      className="border border-gray-300 rounded-md px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="email"
+                      className="block text-left text-gray-700 font-medium mb-2"
+                    >
+                      Email Address
+                    </label>
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      className="border border-gray-300 rounded-md px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="companyName"
+                      className="block text-left text-gray-700 font-medium mb-2"
+                    >
+                      Company's name
+                    </label>
+                    <input
+                      type="text"
+                      id="companyName"
+                      name="companyName"
+                      className="border border-gray-300 rounded-md px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="companyEmail"
+                      className="block text-left text-gray-700 font-medium mb-2"
+                    >
+                      Email Address
+                    </label>
+                    <input
+                      type="companyEmail"
+                      id="companyEmail"
+                      name="companyEmail"
+                      className="border border-gray-300 rounded-md px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      required
+                    />
+                  </div>
+                </div>
+                <button
+                  type="submit"
+                  className="bg-[#6FC446] hover:bg-#6FC446-600 text-white font-medium py-3 px-6 rounded-md focus:outline-none focus:ring-2 focus:ring-#6FC446-300 flex items-center justify-center whitespace-nowrap"
+                >
+                  {isSubmitting ? (
+                    "Submitting"
+                  ) : (
+                    <>
+                      Submit{" "}
+                      <IoIosArrowForward
+                        color="white"
+                        style={{ marginLeft: "4px" }}
+                      />
+                    </>
+                  )}
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
