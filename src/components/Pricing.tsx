@@ -1,10 +1,13 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { IoIosArrowForward } from 'react-icons/io';
+import { usePaystackPayment } from "react-paystack";
+import SuccessModal from './SuccessModal';
 
 interface Plan {
   name: string;
   price: string;
+  amount: string;
   description: string;
   features: string[];
   color: string;
@@ -16,11 +19,13 @@ const PricingPlans = () => {
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   
   const plans = [
     {
       name: 'Start Up',
       price: 'N450,000',
+      amount: '450000',
       description: 'One – Off Amount\nOne - off Sales system tools setup',
       features: [
         'Number of Student(s): 1',
@@ -39,6 +44,7 @@ const PricingPlans = () => {
     {
       name: 'Scale',
       price: 'N1,500,000',
+      amount: '1500000',
       description: 'One – Off Amount\nOne off + two-month maintenance',
       features: [
         'Number of Student(s): 4',
@@ -58,6 +64,7 @@ const PricingPlans = () => {
     {
       name: 'Growth',
       price: 'N900,000',
+      amount: '900000',
       description: 'One – Off Amount\nOne off + one-month maintenance',
       features: [
         'Number of Student(s): 2',
@@ -86,9 +93,94 @@ const PricingPlans = () => {
     setIsModalOpen(false);
   };
 
+  const config = {
+    reference: new Date().getTime().toString(),
+    email: "", // Will be set dynamically
+    amount: Number(selectedPlan?.amount || 0) * 100,
+    publicKey: "pk_live_24d621bf7507b757f14074cf356b682dba0b33d2",
+    metadata: {
+      custom_fields: [
+        {
+          name: "",
+          email: "",
+          phonenumber: "",
+          plan: selectedPlan?.name || "",
+          amount: selectedPlan?.price || "",
+          companyName: "",
+          companyEmail: "",
+          display_name: "Customer",
+          variable_name: "customer",
+          value: JSON.stringify({
+            name: "",
+            email: "",
+            phonenumber: "",
+            plan: selectedPlan?.name || "",
+            companyName: "",
+            companyEmail: "",
+          }),
+        },
+        // To pass extra metadata, add an object with the same fields as above
+      ],
+    },
+  };
+
+  const initializePayment = usePaystackPayment(config);
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    alert("Form submitted");
+    // alert("Form submitted");
+    if(!selectedPlan) return;
+    try {
+      setIsSubmitting(true);
+      const formData = new FormData(e.currentTarget);
+      // const name = formData.get("name") as string;
+      config.metadata.custom_fields[0].name = formData.get(
+        "name"
+      ) as string;
+      config.email = formData.get("email") as string;
+      config.metadata.custom_fields[0].email = formData.get(
+        "email"
+      ) as string;
+      config.metadata.custom_fields[0].phonenumber = formData.get(
+        "phonenumber"
+      ) as string;
+      config.metadata.custom_fields[0].plan = formData.get(
+        "plan"
+      ) as string;
+      config.metadata.custom_fields[0].amount = formData.get(
+        "amount"
+      ) as string;
+      config.metadata.custom_fields[0].companyName = formData.get(
+        "companyName"
+      ) as string;
+      config.metadata.custom_fields[0].companyEmail = formData.get(
+        "companyEmail"
+      ) as string;
+      initializePayment({ onSuccess, onClose });
+    } catch (error) {
+      console.error(error);
+      setIsSubmitting(false);
+    }
+
+    // const email = formData.get("email") as string;
+    // const phonenumber = formData.get("phonenumber") as string;
+    // const companyName = formData.get("companyName") as string;
+    // const companyEmail = formData.get("companyEmail") as string;
+  };
+
+  const onSuccess = (reference: any) => {
+    // Implementation for whatever you want to do with reference and after success call.
+    console.log(reference);
+
+    setIsSubmitting(false);
+    closeModal();
+    setIsSuccessModalOpen(true);
+  };
+
+  // you can call this function anything
+  const onClose = () => {
+    // implementation for  whatever you want to do when the Paystack dialog closed.
+    console.log("closed");
   };
 
   const CheckIcon = ({ className }: { className?: string }) => (
@@ -271,7 +363,7 @@ const PricingPlans = () => {
                       htmlFor="companyEmail"
                       className="block text-left text-gray-700 font-medium mb-2"
                     >
-                      Email Address
+                      Company's Email Address
                     </label>
                     <input
                       type="companyEmail"
@@ -302,6 +394,9 @@ const PricingPlans = () => {
             </div>
           </div>
         </div>
+      )}
+      {isSuccessModalOpen && (
+        <SuccessModal onClose={() => setIsSuccessModalOpen(false)} />
       )}
     </div>
   );
